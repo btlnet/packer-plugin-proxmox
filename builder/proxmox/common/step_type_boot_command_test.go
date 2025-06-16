@@ -6,6 +6,7 @@ package proxmox
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"strings"
 	"testing"
 
@@ -140,6 +141,7 @@ func TestTypeBootCommand(t *testing.T) {
 			step := stepTypeBootCommand{
 				c.builderConfig.BootConfig,
 				c.builderConfig.Ctx,
+				&communicator.Config{},
 			}
 			action := step.Run(context.TODO(), state)
 			step.Cleanup(state)
