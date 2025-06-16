@@ -189,7 +189,7 @@ func (s *stepStartVM) Run(ctx context.Context, state multistep.StateBag) multist
 		id := c.VMID
 		if id == 0 {
 			ui.Say("No VM ID given, getting next free from Proxmox")
-			genID, err := client.GetNextID(0)
+			genID, err := client.GetNextID(1000)
 			if err != nil {
 				state.Put("error", err)
 				ui.Error(err.Error())
