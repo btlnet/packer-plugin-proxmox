@@ -59,6 +59,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook,
 		&stepTypeBootCommand{
 			BootConfig: b.config.BootConfig,
 			Ctx:        b.config.Ctx,
+			Comm:       comm,
 		},
 		&communicator.StepConnect{
 			Config:    comm,

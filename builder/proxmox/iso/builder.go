@@ -5,6 +5,7 @@ package proxmoxiso
 
 import (
 	"context"
+	"fmt"
 
 	proxmoxapi "github.com/Telmate/proxmox-api-go/proxmox"
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -40,7 +41,12 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 
 	state.Put("iso-config", &b.config)
 
-	preSteps := []multistep.Step{}
+	preSteps := []multistep.Step{
+		&StepSshKeyPair{
+			Debug:        b.config.PackerDebug,
+			DebugKeyPath: fmt.Sprintf("%s.pem", b.config.PackerBuildName),
+		},
+	}
 	postSteps := []multistep.Step{}
 
 	sb := proxmox.NewSharedBuilder(BuilderID, b.config.Config, preSteps, postSteps, &isoVMCreator{})

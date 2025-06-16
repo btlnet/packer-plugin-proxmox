@@ -13,6 +13,7 @@ import (
 
 	"github.com/Telmate/proxmox-api-go/proxmox"
 	"github.com/hashicorp/packer-plugin-sdk/bootcommand"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
@@ -22,12 +23,14 @@ import (
 // the installation process such that Packer can later reach the VM over SSH/WinRM
 type stepTypeBootCommand struct {
 	bootcommand.BootConfig
-	Ctx interpolate.Context
+	Ctx  interpolate.Context
+	Comm *communicator.Config
 }
 
 type bootCommandTemplateData struct {
-	HTTPIP   string
-	HTTPPort int
+	HTTPIP       string
+	HTTPPort     int
+	SSHPublicKey string
 }
 
 type commandTyper interface {
@@ -72,8 +75,9 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 
 	state.Put("http_ip", httpIP)
 	s.Ctx.Data = &bootCommandTemplateData{
-		HTTPIP:   httpIP,
-		HTTPPort: state.Get("http_port").(int),
+		HTTPIP:       httpIP,
+		HTTPPort:     state.Get("http_port").(int),
+		SSHPublicKey: string(s.Comm.SSHPublicKey),
 	}
 
 	ui.Say("Typing the boot command")
